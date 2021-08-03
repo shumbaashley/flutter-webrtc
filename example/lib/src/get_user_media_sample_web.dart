@@ -97,58 +97,13 @@ class _GetUserMediaSampleState extends State<GetUserMediaSample> {
     });
   }
 
-  void _startRecording() async {
-    if (_localStream == null) throw Exception('Can\'t record without a stream');
-    _mediaRecorder = MediaRecorder();
-    setState(() {});
-    _mediaRecorder?.startWeb(_localStream!);
-  }
-
-  void _stopRecording() async {
-    final objectUrl = await _mediaRecorder?.stop();
-    setState(() {
-      _mediaRecorder = null;
-    });
-    print(objectUrl);
-    // ignore: unsafe_html
-    html.window.open(objectUrl, '_blank');
-  }
-
-  void _captureFrame() async {
-    if (_localStream == null) throw Exception('Can\'t record without a stream');
-    final videoTrack = _localStream!
-        .getVideoTracks()
-        .firstWhere((track) => track.kind == 'video');
-    final frame = await videoTrack.captureFrame();
-    await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              content:
-                  Image.memory(frame.asUint8List(), height: 720, width: 1280),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: Navigator.of(context, rootNavigator: true).pop,
-                  child: Text('OK'),
-                )
-              ],
-            ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('GetUserMedia API Test'),
+        title: Text('GetUserMedia'),
         actions: _inCalling
             ? <Widget>[
-                IconButton(
-                  icon: Icon(Icons.camera),
-                  onPressed: _captureFrame,
-                ),
-                IconButton(
-                  icon: Icon(_isRec ? Icons.stop : Icons.fiber_manual_record),
-                  onPressed: _isRec ? _stopRecording : _startRecording,
-                ),
                 PopupMenuButton<String>(
                   onSelected: _switchCamera,
                   itemBuilder: (BuildContext context) {
